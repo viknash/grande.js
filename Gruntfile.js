@@ -8,7 +8,7 @@ module.exports = function (grunt) {
                     src: ["js/grande.js"],
                     instrumentedFiles: "temp/",
                     htmlReport: "report/coverage",
-                    coberturaReport: "report/"
+                    lcovReport: "report/"
                 }
             },
             all: ["test/**.html"]
