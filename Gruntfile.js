@@ -19,11 +19,18 @@ module.exports = function (grunt) {
                     'dist/grande.min.js': ['js/grande.js']
                 }
             }
+        },
+        watch: {
+            scripts: {
+                files: ['js/**/*.js', 'animate-config.json'],
+                tasks: ['uglify', "qunit"]
+            }
         }
     });
 
     grunt.loadNpmTasks("grunt-qunit-istanbul");
     grunt.loadNpmTasks("grunt-contrib-uglify");
+    grunt.loadNpmTasks("grunt-contrib-watch");
     // @TODO: add lint hook here as well for eslint
     grunt.loadNpmTasks('grunt-travis-lint');
     grunt.registerTask("travis", ["travis-lint", "qunit"]);
