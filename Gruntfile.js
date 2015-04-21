@@ -14,6 +14,9 @@ module.exports = function (grunt) {
             all: ["test/**.html"]
         },
         uglify: {
+            options: {
+                sourceMap: true
+            },
             all: {
                 files: {
                     'dist/grande.min.js': ['js/grande.js']
@@ -34,4 +37,5 @@ module.exports = function (grunt) {
     // @TODO: add lint hook here as well for eslint
     grunt.loadNpmTasks('grunt-travis-lint');
     grunt.registerTask("travis", ["travis-lint", "qunit"]);
+    grunt.registerTask("default", ["uglify", "qunit"]);
 };
