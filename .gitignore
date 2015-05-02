@@ -4,4 +4,4 @@ bin/coverage
 node_modules/
 .DS_Store
 report/
-/dist/*.map
+dist/
