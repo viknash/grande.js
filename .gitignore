@@ -6,3 +6,5 @@ node_modules/
 report/
 dist/
 temp/
+bower_components/
+test/styles/lib/
