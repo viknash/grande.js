@@ -1,6 +1,37 @@
+require.config({
+  //By default load any module IDs from js/lib
+  baseUrl: '.',
+  //except, if the module ID starts with "app",
+  //load it from the js/app directory. paths
+  //config is relative to the baseUrl, and
+  //never includes a ".js" extension since
+  //the paths config could be for a directory.
+  paths: {
+    grande: '../js/grande',
+    jquery: '../bower_components/jquery/src/jquery',
+    animo: '../../animo.js/animo',
+  },
+  map: {
+    // '*' means all modules will get 'jquery-private'
+    // for their 'jquery' dependency.
+    '*': {
+      'css': '../bower_components/require-css/css',
+      'text': '../bower_components/requirejs-text/text',
+      'image': '../bower_components/requirejs-plugins/src/image',
+      'json': '../bower_components/requirejs-plugins/src/json',
+    },
+
+
+  }
+});
+
+require(['grande'], function (grande) {
+  grande.bind(document.querySelectorAll("article"));
+});
+
 module("grande initialization");
 
-test("it should be available at the global scope", function() {
+test("it should be available at the global scope", function () {
   ok(typeof window.grande === "object",
     "grande should be available at the window");
 });
@@ -8,24 +39,24 @@ test("it should be available at the global scope", function() {
 
 module("public api");
 
-test("it should provide bind as a method", function() {
+test("it should provide bind as a method", function () {
   ok(typeof window.grande.bind === "function",
     "bind should be a public api method");
 });
 
-test("it should provide select as a method", function() {
+test("it should provide select as a method", function () {
   ok(typeof window.grande.select === "function",
     "select should be a public API method");
 });
 
 
 module("event bindings", {
-  teardown: function() {
+  teardown: function () {
     unbind();
   }
 });
 
-test("it should bind the same events to the editableNode mousedown,keyup,mouseup", function() {
+test("it should bind the same events to the editableNode mousedown,keyup,mouseup", function () {
   var editableNode = document.querySelectorAll(".g-body article")[0];
 
   grande.bind();
@@ -36,7 +67,7 @@ test("it should bind the same events to the editableNode mousedown,keyup,mouseup
     "mousedown, keyup, and mouseup should delegate to the same function");
 });
 
-test("it should bind mousedown, mouseup, and keyup on the document", function() {
+test("it should bind mousedown, mouseup, and keyup on the document", function () {
   ok(document.onmousedown === null,
     "document mousedown should be null");
   ok(document.onmouseup === null,
@@ -54,7 +85,7 @@ test("it should bind mousedown, mouseup, and keyup on the document", function() 
     "document keyup should be bound to a function");
 });
 
-test("it should bind to the windows resize event", function() {
+test("it should bind to the windows resize event", function () {
   ok(window.onresize === null,
     "window resize should be null");
 
@@ -64,7 +95,7 @@ test("it should bind to the windows resize event", function() {
     "window resize should be bound to a function");
 });
 
-test("it should attach the toolbar template to the DOM", function() {
+test("it should attach the toolbar template to the DOM", function () {
   equal(document.querySelectorAll(".text-menu").length, 0,
     "text menu should not be defined on the dom");
 
@@ -78,12 +109,11 @@ test("it should attach the toolbar template to the DOM", function() {
 function unbind() {
   document.onmousedown =
     document.onmouseup =
-      document.onkeyup =
-       window.onresize = null;
+    document.onkeyup =
+    window.onresize = null;
 
   var menuEl = document.querySelectorAll(".text-menu");
   if (menuEl.length) {
     menuEl[0].parentNode.removeChild(menuEl[0]);
   }
 }
-

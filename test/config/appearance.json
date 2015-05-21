@@ -1,0 +1,22 @@
+{
+  "menu": {
+    "animation": {
+      "in": [
+        {
+          "type": "popUpwards",
+          "duration": 0.5
+        },
+        {
+          "type": "tada",
+          "duration": 0.5
+        }
+      ],
+      "out": [
+        {
+          "type": "fadeOut",
+          "duration": 0.5
+        }
+      ]
+    }
+  }
+}

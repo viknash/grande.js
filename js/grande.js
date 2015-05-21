@@ -3,8 +3,8 @@ define(['json!../config/appearance.json',
         'animo',
         'css!../styles/lib/menu',
         'css!../styles/lib/editor',
-        //'css!../styles/lib/animate.min',
-        'css!../components/animo.js/animate+animo'
+        'css!../styles/lib/animate.min',
+        //'css!../components/animo.js/animate+animo'
        ], function (appearance, jQuery, animo) {
   /*jshint multistr:true */
   var EDGE = -999;
@@ -593,37 +593,126 @@ define(['json!../config/appearance.json',
     }
   }
 
-  function setTextMenuPosition(top, left) {
+  function setTextMenuPosition(newTop, newLeft) {
+    var oldTop = parseInt(textMenu.style.top);
+    var oldLeft = parseInt(textMenu.style.left);
+    if (isNaN(oldTop)) {
+      textMenu.style.top = EDGE + 'px';
+      oldTop = EDGE;
+    }
+    if (isNaN(oldLeft)) {
+      textMenu.style.left = EDGE + 'px';
+      oldLeft = EDGE;
+    }
+    newTop = Math.floor(newTop);
+    newLeft = Math.floor(newLeft);
     if (options.animate) {
-      if (top === EDGE) {
-        textMenu.style.top = top + "px";
-        textMenu.style.left = left + "px";
-        textMenu.className = "text-menu hide";
+      if (oldTop === newTop && oldLeft === newLeft) {
+        //No change in position, do nothing
       } else {
-        textMenu.style.top = top + "px";
-        textMenu.style.left = left + "px";
-        /*var newInDuration = "-webkit-animation-duration: " + appearance.menu.animation.in.duration.toString() + "ms; " +
-          "-ms-animation-duration: " + appearance.menu.animation.in.duration.toString() + "ms; " +
-          "animation-duration: " + appearance.menu.animation.in.duration.toString() + "ms; ";
-        createCSSClass(".duration", newInDuration);
-        textMenu.className = "text-menu active duration " + appearance.menu.animation.in.type;
-        */
-        textMenu.className = "text-menu active";
-        console.log(jQuery('.text-menu'));
-        jQuery('.text-menu').animo({
-          animation: 'fadeIn',
-          duration: 1
-        }, function (e) {
-          e.element.animo({
-            animation: "flipOutY",
-            keep: true
-          });
-        });
-        console.log(jQuery('.text-menu'));
+        var evalText = "jQuery('.text-menu').animo({";
+        var closingBrackets = 1;
+        //Position changed, do something
+        if ((oldTop !== EDGE && newTop === EDGE) || (oldLeft !== EDGE && newLeft === EDGE)) {
+          //Hide
+          for (var hideCnt = 0; hideCnt < appearance.menu.animation.hide.length; hideCnt += 1) {
+            if (hideCnt > 0) {
+              evalText += "},function(e){e.element.animo({";
+              closingBrackets += 1;
+            }
+            if (appearance.menu.animation.hide[hideCnt].type !== undefined) {
+              evalText += "animation:'" + appearance.menu.animation.hide[hideCnt].type + "',";
+            }
+            if (appearance.menu.animation.hide[hideCnt].duration !== undefined) {
+              evalText += "duration:" + appearance.menu.animation.hide[hideCnt].duration.toString() + ",";
+            }
+            if (appearance.menu.animation.hide[hideCnt].keep !== undefined) {
+              evalText += "keep:" + appearance.menu.animation.hide[hideCnt].keep.toString() + ",";
+            }
+          }
+          evalText += "},function(e){";
+          evalText += "textMenu.style.top=" + Math.round(newTop).toString() + "+'px';";
+          evalText += "textMenu.style.left=" + Math.round(newLeft).toString() + "+'px';";
+          evalText += "textMenu.className = 'text-menu hide'";
+        } else if ((oldTop === EDGE && newTop !== EDGE) || (oldLeft === EDGE && newLeft !== EDGE)) {
+          //Show
+          textMenu.className = "text-menu active";
+          textMenu.style.top = newTop + "px";
+          textMenu.style.left = newLeft + "px";
+          for (var showCnt = 0; showCnt < appearance.menu.animation.show.length; showCnt += 1) {
+            if (showCnt > 0) {
+              evalText += "},function(e){e.element.animo({";
+              closingBrackets += 1;
+            }
+            if (appearance.menu.animation.show[showCnt].type !== undefined) {
+              evalText += "animation:'" + appearance.menu.animation.show[showCnt].type + "',";
+            }
+            if (appearance.menu.animation.show[showCnt].duration !== undefined) {
+              evalText += "duration:" + appearance.menu.animation.show[showCnt].duration.toString() + ",";
+            }
+            if (appearance.menu.animation.show[showCnt].keep !== undefined) {
+              evalText += "keep:" + appearance.menu.animation.show[showCnt].keep.toString() + ",";
+            }
+          }
+        } else {
+          //Change Position
+          textMenu.className = "text-menu active";
+          for (var outCnt = 0; outCnt < appearance.menu.animation.out.length; outCnt += 1) {
+            if (outCnt > 0) {
+              evalText += "},function(e){e.element.animo({";
+              closingBrackets += 1;
+            }
+            if (appearance.menu.animation.out[outCnt].type !== undefined) {
+              evalText += "animation:'" + appearance.menu.animation.out[outCnt].type + "',";
+            }
+            if (appearance.menu.animation.out[outCnt].duration !== undefined) {
+              evalText += "duration:" + appearance.menu.animation.out[outCnt].duration.toString() + ",";
+            }
+            if (appearance.menu.animation.out[outCnt].keep !== undefined) {
+              evalText += "keep:" + appearance.menu.animation.out[outCnt].keep.toString() + ",";
+            }
+          }
+          for (var inCnt = 0; inCnt < appearance.menu.animation.in.length; inCnt += 1) {
+            evalText += "},function(e){";
+            closingBrackets += 1;
+            if (inCnt === 0) {
+              evalText += "textMenu.style.top=" + Math.round(newTop).toString() + "+'px';";
+              evalText += "textMenu.style.left=" + Math.round(newLeft).toString() + "+'px';";
+            }
+            evalText += "e.element.animo({";
+            if (appearance.menu.animation.in[inCnt].type !== undefined) {
+              evalText += "animation:'" + appearance.menu.animation.in[inCnt].type + "',";
+            }
+            if (appearance.menu.animation.in[inCnt].duration !== undefined) {
+              evalText += "duration:" + appearance.menu.animation.in[inCnt].duration.toString() + ",";
+            }
+            if (appearance.menu.animation.in[inCnt].keep !== undefined) {
+              evalText += "keep:" + appearance.menu.animation.in[inCnt].keep.toString() + ",";
+            }
+          }
+        }
+        for (var clBracCnt = 0; clBracCnt < closingBrackets; clBracCnt += 1) {
+          evalText += "});";
+        }
+        /*jshint -W061 */
+        eval(evalText);
       }
+      /*jQuery('.text-menu').animo({
+              animation: 'fadeOut',
+              duration: 0.5
+            }, function (e) {
+              textMenu.style.top = top + "px";
+              textMenu.style.left = left + "px";
+              e.element.animo({
+                animation: "fadeIn",
+                keep: true,
+                duration: 0.5
+              });
+            });
+            */
     } else {
-      textMenu.style.top = top + "px";
-      textMenu.style.left = left + "px";
+      textMenu.style.top = newTop + "px";
+      textMenu.style.left = newLeft + "px";
     }
   }
 
@@ -634,6 +723,12 @@ define(['json!../config/appearance.json',
    *  http://www.happycode.info/
    *
    */
+  /*var newInDuration = "-webkit-animation-duration: " + appearance.menu.animation.in.duration.toString() + "ms; " +
+    "-ms-animation-duration: " + appearance.menu.animation.in.duration.toString() + "ms; " +
+    "animation-duration: " + appearance.menu.animation.in.duration.toString() + "ms; ";
+  createCSSClass(".duration", newInDuration);
+  textMenu.className = "text-menu active duration " + appearance.menu.animation.in.type;
+  */
   function createCSSClass(selector, style) {
     if (!document.styleSheets) {
       return;

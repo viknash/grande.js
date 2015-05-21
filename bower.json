@@ -1,0 +1,15 @@
+{
+  "name": "grande.js",
+  "author": {
+    "name": "Matt DuVal",
+    "email": "matt@mattduvall.com",
+    "url": "https://github.com/mduvall/grande.js"
+  },
+  "version": "0.0.1",
+  "dependencies": {
+    "requirejs": "^2.1.17",
+    "requirejs-text": "^2.0.14",
+    "requirejs-plugins": "^1.0.3",
+    "require-css": "^0.1.8"
+  }
+}
